@@ -1,0 +1,29 @@
+<h1><%= project.naziv %></h1>
+
+<p><strong>Opis:</strong> <%= project.opis %></p>
+<p><strong>Cijena:</strong> <%= project.cijena %> €</p>
+<p><strong>Obavljeni poslovi:</strong> <%= project.obavljeniPoslovi %></p>
+<p><strong>Početak:</strong> <%= project.datumPocetka %></p>
+<p><strong>Kraj:</strong> <%= project.datumZavrsetka %></p>
+
+<a href="/projects/<%= project.id %>/edit">Uredi</a><br>
+<a href="/projects">Natrag</a>
+
+<h2>Članovi tima</h2>
+
+<ul>
+    <% project.teamMembers.forEach(member => { %>
+        <li>
+            <strong><%= member.ime %></strong> — <%= member.rola %>
+        </li>
+    <% }) %>
+</ul>
+
+<h3>Dodaj člana tima</h3>
+
+<form action="/projects/<%= project.id %>/team" method="POST">
+    <input name="ime" placeholder="Ime člana"><br>
+    <input name="rola" placeholder="Rola (npr. programer, dizajner)"><br>
+    <button type="submit">Dodaj člana</button>
+</form>
+

@@ -1,0 +1,12 @@
+<h1>Uredi projekt</h1>
+
+<form action="/projects/<%= project.id %>" method="POST">
+    <input name="naziv" value="<%= project.naziv %>"><br>
+    <textarea name="opis"><%= project.opis %></textarea><br>
+    <input name="cijena" value="<%= project.cijena %>"><br>
+    <input name="obavljeniPoslovi" value="<%= project.obavljeniPoslovi %>"><br>
+    <input name="datumPocetka" type="date" value="<%= project.datumPocetka %>"><br>
+    <input name="datumZavrsetka" type="date" value="<%= project.datumZavrsetka %>"><br>
+
+    <button type="submit">Spremi promjene</button>
+</form>

@@ -1,0 +1,16 @@
+<h1>Lista projekata</h1>
+
+<a href="/projects/new">Dodaj novi projekt</a>
+
+<ul>
+    <% projects.forEach(p => { %>
+        <li>
+            <strong><%= p.naziv %></strong>
+            — <a href="/projects/<%= p.id %>">Detalji</a>
+            — <a href="/projects/<%= p.id %>/edit">Uredi</a>
+            <form action="/projects/<%= p.id %>/delete" method="POST" style="display:inline;">
+                <button type="submit">Obriši</button>
+            </form>
+        </li>
+    <% }) %>
+</ul>
