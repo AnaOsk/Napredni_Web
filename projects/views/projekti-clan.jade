@@ -1,0 +1,178 @@
+extends layout
+
+block content
+    .container.mx-auto.px-4.py-8.max-w-6xl
+        h1.text-3xl.font-bold.text-gray-800.mb-2= title
+        p.text-gray-600.mb-8 Projekti na kojima ste clan tima (mozete uredivati samo obavljene poslove)
+
+        if !currentUser
+            .bg-white.rounded-lg.shadow-md.p-8.text-center
+                h2.text-2xl.font-semibold.text-gray-700.mb-4 Dobrodosli!
+                p.text-gray-600.mb-6 Prijavite se za pristup projektima.
+                .flex.justify-center.gap-4
+                    a.bg-indigo-600.text-white.px-6.py-3.rounded-md.font-medium(href='/auth/login', class='hover:bg-indigo-700') Prijava
+
+        if currentUser
+            .grid.grid-cols-1.gap-6(class='lg:grid-cols-2')
+
+                //- LIJEVA KOLONA - Detalji projekta
+                .space-y-6
+                    #projectInfo.bg-white.rounded-lg.shadow-md.p-6
+                        h2.text-xl.font-semibold.text-gray-700.mb-4.border-b.pb-2 Detalji projekta
+                        input#currentProjectId(type='hidden')
+                        .space-y-3
+                            .flex
+                                span.font-medium.text-gray-600.w-40 Naziv:
+                                span#projectInfoNaziv.text-gray-800 -
+                            .flex
+                                span.font-medium.text-gray-600.w-40 Opis:
+                                span#projectInfoOpis.text-gray-800 -
+                            .flex
+                                span.font-medium.text-gray-600.w-40 Cijena:
+                                span
+                                    span#projectInfoCijena.text-gray-800 -
+                                    |  EUR
+                            .flex
+                                span.font-medium.text-gray-600.w-40 Voditelj:
+                                span#projectInfoVoditelj.text-gray-800 -
+                            .flex
+                                span.font-medium.text-gray-600.w-40 Datum pocetka:
+                                span#projectInfoPocetak.text-gray-800 -
+                            .flex
+                                span.font-medium.text-gray-600.w-40 Datum zavrsetka:
+                                span#projectInfoZavrsetak.text-gray-800 -
+                            .flex
+                                span.font-medium.text-gray-600.w-40 Arhiviran:
+                                span#projectInfoArhiviran.text-gray-800 -
+
+                        //- OBAVLJENI POSLOVI - FORMA ZA UREDIVANJE
+                        #editPosloviSection.mt-6.pt-6.border-t(style='display:none;')
+                            h3.text-lg.font-semibold.text-gray-700.mb-4 Obavljeni poslovi
+                            .space-y-3
+                                div
+                                    textarea#editObavljeniPoslovi.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder='Opisite obavljene poslove...', rows='4', class='focus:outline-none focus:ring-2 focus:ring-blue-500')
+                                button#btnUpdatePoslovi.w-full.bg-green-600.text-white.font-medium.py-2.px-4.rounded-md.transition.duration-200(class='hover:bg-green-700') Spremi obavljene poslove
+
+                        //- CLANOVI TIMA (samo pregled)
+                        #teamSection.mt-6.pt-6.border-t(style='display:none;')
+                            h3.text-lg.font-semibold.text-gray-700.mb-4 Clanovi tima
+                            .overflow-x-auto
+                                table#teamList.w-full.text-sm
+                                    thead.bg-gray-50
+                                        tr
+                                            th.px-4.py-2.text-left.font-medium.text-gray-600 Ime
+                                            th.px-4.py-2.text-left.font-medium.text-gray-600 Uloga
+                                            th.px-4.py-2.text-left.font-medium.text-gray-600 Email
+                                    tbody.divide-y.divide-gray-200
+
+                //- DESNA KOLONA - Lista projekata
+                .space-y-6
+                    //- LISTA PROJEKATA
+                    #projectList.bg-white.rounded-lg.shadow-md.p-6
+                        h2.text-xl.font-semibold.text-gray-700.mb-4.border-b.pb-2 Projekti gdje sam clan
+                        .overflow-x-auto
+                            table.w-full.text-sm
+                                thead.bg-gray-50
+                                    tr
+                                        th.px-4.py-3.text-left.font-medium.text-gray-600 Naziv
+                                        th.px-4.py-3.text-left.font-medium.text-gray-600 Voditelj
+                                        th.px-4.py-3.text-left.font-medium.text-gray-600 Pocetak
+                                        th.px-4.py-3.text-left.font-medium.text-gray-600 Zavrsetak
+                                tbody.divide-y.divide-gray-200
+
+    script.
+        // Oznaci da je ovo stranica za clanove
+        window.projectListEndpoint = '/projects/projekti-clan-list';
+        window.isMemberPage = true;
+
+        $(document).ready(function() {
+            // Ucitaj projekte za clana
+            loadMemberProjects();
+
+            // Event za spremanje obavljenih poslova
+            $('#btnUpdatePoslovi').on('click', function() {
+                var projectId = $('#currentProjectId').val();
+                var obavljeniPoslovi = $('#editObavljeniPoslovi').val();
+
+                $.ajax({
+                    type: 'PUT',
+                    url: '/projects/updateobavljeniposlovi/' + projectId,
+                    contentType: 'application/json',
+                    data: JSON.stringify({ obavljeniPoslovi: obavljeniPoslovi }),
+                    success: function(response) {
+                        if (response.msg === '') {
+                            alert('Obavljeni poslovi su spremljeni!');
+                            loadMemberProjects();
+                        } else {
+                            alert('Greska: ' + response.msg);
+                        }
+                    },
+                    error: function() {
+                        alert('Greska pri spremanju');
+                    }
+                });
+            });
+        });
+
+        function loadMemberProjects() {
+            $.getJSON('/projects/projekti-clan-list', function(data) {
+                var tableContent = '';
+                $.each(data, function(index, project) {
+                    var voditelj = project.voditelj ? project.voditelj.username : '-';
+                    var pocetak = project.datumPocetka ? new Date(project.datumPocetka).toLocaleDateString('hr-HR') : '-';
+                    var zavrsetak = project.datumZavrsetka ? new Date(project.datumZavrsetka).toLocaleDateString('hr-HR') : '-';
+
+                    tableContent += '<tr class="hover:bg-gray-50 cursor-pointer project-row" data-id="' + project._id + '">';
+                    tableContent += '<td class="px-4 py-3 text-blue-600 hover:underline">' + (project.naziv || '-') + '</td>';
+                    tableContent += '<td class="px-4 py-3">' + voditelj + '</td>';
+                    tableContent += '<td class="px-4 py-3">' + pocetak + '</td>';
+                    tableContent += '<td class="px-4 py-3">' + zavrsetak + '</td>';
+                    tableContent += '</tr>';
+                });
+                $('#projectList table tbody').html(tableContent);
+            });
+        }
+
+        // Klik na projekt za prikaz detalja
+        $(document).on('click', '.project-row', function() {
+            var projectId = $(this).data('id');
+            showMemberProjectInfo(projectId);
+        });
+
+        function showMemberProjectInfo(projectId) {
+            $.getJSON('/projects/projekti-clan-list', function(data) {
+                var project = data.find(function(p) { return p._id === projectId; });
+                if (project) {
+                    $('#currentProjectId').val(project._id);
+                    $('#projectInfoNaziv').text(project.naziv || '-');
+                    $('#projectInfoOpis').text(project.opis || '-');
+                    $('#projectInfoCijena').text(project.cijena || '-');
+                    $('#projectInfoVoditelj').text(project.voditelj ? project.voditelj.username : '-');
+                    $('#projectInfoPocetak').text(project.datumPocetka ? new Date(project.datumPocetka).toLocaleDateString('hr-HR') : '-');
+                    $('#projectInfoZavrsetak').text(project.datumZavrsetka ? new Date(project.datumZavrsetka).toLocaleDateString('hr-HR') : '-');
+                    $('#projectInfoArhiviran').text(project.arhiviran ? 'Da' : 'Ne');
+
+                    // Postavi obavljene poslove u textarea
+                    $('#editObavljeniPoslovi').val(project.obavljeniPoslovi || '');
+                    $('#editPosloviSection').show();
+
+                    // Prikazi clanove tima (samo pregled)
+                    var teamContent = '';
+                    if (project.clanoviTima && project.clanoviTima.length > 0) {
+                        $.each(project.clanoviTima, function(index, clan) {
+                            var ime = clan.korisnik ? clan.korisnik.username : '-';
+                            var email = clan.korisnik ? clan.korisnik.email : '-';
+                            teamContent += '<tr>';
+                            teamContent += '<td class="px-4 py-2">' + ime + '</td>';
+                            teamContent += '<td class="px-4 py-2">' + (clan.uloga || '-') + '</td>';
+                            teamContent += '<td class="px-4 py-2">' + email + '</td>';
+                            teamContent += '</tr>';
+                        });
+                    } else {
+                        teamContent = '<tr><td colspan="3" class="px-4 py-2 text-gray-500 text-center">Nema clanova tima</td></tr>';
+                    }
+                    $('#teamList tbody').html(teamContent);
+                    $('#teamSection').show();
+                }
+            });
+        }
