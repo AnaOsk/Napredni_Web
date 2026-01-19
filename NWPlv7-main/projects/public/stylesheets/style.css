@@ -1,0 +1,132 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+a {
+  color: #00B7FF;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  color: #333;
+  border-bottom: 2px solid #00B7FF;
+  padding-bottom: 10px;
+}
+
+h2 {
+  color: #555;
+  margin-top: 30px;
+}
+
+#wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+#projectInfo {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+#projectInfo p {
+  line-height: 2;
+}
+
+#projectList table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#projectList table th,
+#projectList table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+#projectList table th {
+  background-color: #00B7FF;
+  color: white;
+}
+
+#projectList table tr:hover {
+  background-color: #f1f1f1;
+}
+
+#addProject fieldset,
+#editProject fieldset {
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+#addProject label,
+#editProject label {
+  display: inline-block;
+  width: 150px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#addProject input[type="text"],
+#addProject input[type="number"],
+#addProject input[type="date"],
+#addProject textarea,
+#editProject input[type="text"],
+#editProject input[type="number"],
+#editProject input[type="date"],
+#editProject textarea {
+  width: 300px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin-top: 5px;
+}
+
+#addProject textarea,
+#editProject textarea {
+  vertical-align: top;
+}
+
+button {
+  background-color: #00B7FF;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+  margin-top: 15px;
+}
+
+button:hover {
+  background-color: #0095cc;
+}
+
+#btnCancelEdit {
+  background-color: #999;
+}
+
+#btnCancelEdit:hover {
+  background-color: #777;
+}
+
+.linkdeleteproject {
+  color: #e74c3c;
+}
+
+.linkeditproject {
+  color: #27ae60;
+}

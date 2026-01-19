@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    title= title
+    script(src='https://cdn.tailwindcss.com')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='https://code.jquery.com/jquery-3.6.0.min.js')
+    script(src='/javascripts/global.js')
+  body.bg-gray-100.min-h-screen(data-authenticated=currentUser ? 'true' : 'false')
+    nav.bg-white.shadow-sm.mb-4
+      .max-w-7xl.mx-auto.px-4.py-3.flex.justify-between.items-center
+        a.text-xl.font-bold.text-indigo-600(href='/') Projekti
+        .flex.items-center.space-x-4
+          if currentUser
+            a.text-indigo-600.hover_text-indigo-800(href='/projects/moji-projekti') Moji projekti
+            a.text-indigo-600.hover_text-indigo-800(href='/projects/projekti-clan') Clan tima
+            a.text-indigo-600.hover_text-indigo-800(href='/projects/arhiva') Arhiva
+            span.text-gray-700 | #{currentUser.username}
+            a.text-indigo-600.hover_text-indigo-800(href='/auth/logout') Odjava
+          else
+            a.text-indigo-600.hover_text-indigo-800(href='/auth/login') Prijava
+            a.bg-indigo-600.text-white.px-4.py-2.rounded.hover_bg-indigo-700(href='/auth/register') Registracija
+    block content
